@@ -26,7 +26,7 @@ namespace Microsoft.Azure.WebJobs.Host.UnitTests.Bindings.Data
         }
 
         [Fact]
-        public void BindNonStringableParameter_FailsIndexing()
+        public async Task BindNonStringableParameter_FailsIndexing()
         {
             // Arrange
             MethodInfo method = typeof(DataBindingFunctionalTests).GetMethod("TryToBindNonStringableParameter",
@@ -37,8 +37,8 @@ namespace Microsoft.Azure.WebJobs.Host.UnitTests.Bindings.Data
             IFunctionIndexCollector stubIndex = new Mock<IFunctionIndexCollector>().Object;
 
             // Act & Assert
-            Exception exception = Assert.Throws<InvalidOperationException>(
-                () => indexer.IndexMethodAsyncCore(method, stubIndex, CancellationToken.None).GetAwaiter().GetResult());
+            Exception exception = await Assert.ThrowsAsync<InvalidOperationException>(
+                () => indexer.IndexMethodAsyncCore(method, stubIndex, CancellationToken.None));
             Assert.Equal("Can't bind parameter 'doubleValue' to type 'System.String'.",
                 exception.Message);
         }

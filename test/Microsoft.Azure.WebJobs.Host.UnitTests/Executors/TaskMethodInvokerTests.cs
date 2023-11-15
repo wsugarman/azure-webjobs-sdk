@@ -12,7 +12,7 @@ namespace Microsoft.Azure.WebJobs.Host.UnitTests.Executors
     public class TaskMethodInvokerTests
     {
         [Fact]
-        public void InvokeAsync_DelegatesToLambda()
+        public async Task InvokeAsync_DelegatesToLambda()
         {
             // Arrange
             object expectedInstance = new object();
@@ -35,7 +35,7 @@ namespace Microsoft.Azure.WebJobs.Host.UnitTests.Executors
             
             // Assert
             Assert.NotNull(task);
-            task.GetAwaiter().GetResult();
+            await task;
             Assert.True(invoked);
             Assert.Same(expectedInstance, instance);
             Assert.Same(expectedArguments, arguments);

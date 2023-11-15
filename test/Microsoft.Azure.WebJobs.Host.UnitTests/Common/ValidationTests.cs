@@ -87,7 +87,7 @@ namespace Microsoft.Azure.WebJobs.Host.UnitTests.Common
         }
 
         [Fact]
-        public void TestValidatorFails()
+        public Task TestValidatorFails()
         {
             var nr = new FakeNameResolver().Add("k1", "v1");
 
@@ -95,8 +95,8 @@ namespace Microsoft.Azure.WebJobs.Host.UnitTests.Common
                 .ConfigureDefaultTestHost<BadFunction>(b => { b.AddExtension<FakeExtClient>(); }, nr)
                 .Build();
 
-            TestHelpers.AssertIndexingError(
-                () => host.GetJobHost<BadFunction>().CallAsync("Valid").GetAwaiter().GetResult(),
+            return TestHelpers.AssertIndexingErrorAsync(
+                () => host.GetJobHost<BadFunction>().CallAsync("Valid"),
                 "BadFunction.Bad", TestAttribute.ErrorMessage);
         }
 
@@ -175,7 +175,7 @@ namespace Microsoft.Azure.WebJobs.Host.UnitTests.Common
         }
 
         [Fact]
-        public void TestLocalValidatorApplied()
+        public Task TestLocalValidatorApplied()
         {
             // Local validator only run if we use the given rule. 
             var nr = new FakeNameResolver().Add("k1", "v1");
@@ -187,8 +187,8 @@ namespace Microsoft.Azure.WebJobs.Host.UnitTests.Common
                 }, nr)
                 .Build();
 
-            TestHelpers.AssertIndexingError(
-                () => host.GetJobHost<LocalFunction2>().CallAsync("WithValidation").GetAwaiter().GetResult(),
+            return TestHelpers.AssertIndexingErrorAsync(
+                () => host.GetJobHost<LocalFunction2>().CallAsync("WithValidation"),
                 "LocalFunction2.WithValidation", TestAttribute.ErrorMessage);
         }
     }

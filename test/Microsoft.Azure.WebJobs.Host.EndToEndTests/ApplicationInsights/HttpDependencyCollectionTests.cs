@@ -228,7 +228,7 @@ namespace Microsoft.Azure.WebJobs.Host.EndToEndTests.ApplicationInsights
                 var containerClient = _blobServiceClient.GetBlobContainerClient(_triggerContainerName);
                 await containerClient.CreateIfNotExistsAsync();
                 var blobClient = containerClient.GetBlobClient("triggerBlob");
-                blobClient.UploadTextAsync("TestData", overwrite: true).Wait();
+                await blobClient.UploadTextAsync("TestData", overwrite: true);
 
                 _functionWaitHandle.WaitOne();
                 // let host run for a while to write output queue message
@@ -382,7 +382,7 @@ namespace Microsoft.Azure.WebJobs.Host.EndToEndTests.ApplicationInsights
             _functionWaitHandle.Set();
         }
 
-        private void ValidateBlobDependency(
+        private static void ValidateBlobDependency(
             DependencyTelemetry dependency,
             string containerName,
             string blobName,
@@ -403,7 +403,7 @@ namespace Microsoft.Azure.WebJobs.Host.EndToEndTests.ApplicationInsights
         }
 
 
-        private void ValidateQueueDependency(
+        private static void ValidateQueueDependency(
             DependencyTelemetry dependency,
             string queueName,
             string operationName,

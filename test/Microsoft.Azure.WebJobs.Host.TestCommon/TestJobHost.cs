@@ -58,21 +58,14 @@ namespace Microsoft.Azure.WebJobs.Host.TestCommon
         }
 
         // Helper for quickly testing indexing errors 
-        public async Task AssertIndexingError(string methodName, string expectedErrorMessage)
+        public async Task AssertIndexingErrorAsync(string methodName, string expectedErrorMessage)
         {
-            try
-            {
-                // Indexing is lazy, so must actually try a call first. 
-                await this.CallAsync(methodName);
-            }
-            catch (FunctionIndexingException e)
-            {
-                string functionName = typeof(TProgram).Name + "." + methodName;
-                Assert.Equal("Error indexing method '" + functionName + "'", e.Message);
-                Assert.True(e.InnerException.Message.Contains(expectedErrorMessage));
-                return;
-            }
-            Assert.True(false, "Invoker should have failed");
+            // Indexing is lazy, so must actually try a call first.
+            FunctionIndexingException e = await Assert.ThrowsAsync<FunctionIndexingException>(() => this.CallAsync(methodName));
+
+            string functionName = typeof(TProgram).Name + "." + methodName;
+            Assert.Equal("Error indexing method '" + functionName + "'", e.Message);
+            Assert.True(e.InnerException.Message.Contains(expectedErrorMessage));
         }
     }
 

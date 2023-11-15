@@ -480,9 +480,9 @@ namespace Microsoft.Azure.WebJobs.Host.UnitTests.Common
                 rule.BindToInput<OpenType>(typeof(AlphaBuilder));
             }
 
-            public async Task Test(JobHost<ConfigError1> host)
+            public Task Test(JobHost<ConfigError1> host)
             {
-                await host.AssertIndexingError("Func", $"No Convert method on type {nameof(AlphaBuilder)} to convert from {nameof(Test6Attribute)} to {nameof(BetaType)}");
+                return host.AssertIndexingErrorAsync("Func", $"No Convert method on type {nameof(AlphaBuilder)} to convert from {nameof(Test6Attribute)} to {nameof(BetaType)}");
             }
 
             // Fail to bind because: 
@@ -510,9 +510,9 @@ namespace Microsoft.Azure.WebJobs.Host.UnitTests.Common
                 rule.BindToInput<AlphaType>(typeof(AlphaBuilder));
             }
 
-            public async Task Test(JobHost<ConfigErrorSearch> host)
+            public Task Test(JobHost<ConfigErrorSearch> host)
             {
-                await host.AssertIndexingError("Func", $"Can't bind Test6 to type 'System.String'.");
+                return host.AssertIndexingErrorAsync("Func", $"Can't bind Test6 to type 'System.String'.");
             }
 
             // Fail to bind because: 

@@ -77,21 +77,14 @@ namespace Microsoft.Azure.WebJobs.Host.UnitTests
         [Fact]
         public async Task MissingBindingDataValues_Throws()
         {
-            try
-            {
-                string result = await Invoke<Functions, TestExtension>(new { k1 = 100 });
-            }
-            catch (FunctionInvocationException e)
-            {
-                // There error should specifically be with p2. p1 and k1 binds ok since we supplied k1. 
-                var msg1 = "Exception binding parameter 'p2'";
-                Assert.Equal(msg1, e.InnerException.Message);
+            FunctionInvocationException e = await Assert.ThrowsAsync<FunctionInvocationException>(() => Invoke<Functions, TestExtension>(new { k1 = 100 }));
 
-                var msg2 = "No value for named parameter 'k2'.";
-                Assert.Equal(msg2, e.InnerException.InnerException.Message);
-                return;
-            }
-            Assert.True(false, "Invoker should have failed");
+            // There error should specifically be with p2. p1 and k1 binds ok since we supplied k1. 
+            var msg1 = "Exception binding parameter 'p2'";
+            Assert.Equal(msg1, e.InnerException.Message);
+
+            var msg2 = "No value for named parameter 'k2'.";
+            Assert.Equal(msg2, e.InnerException.InnerException.Message);
         }
 
         public class FunctionBase

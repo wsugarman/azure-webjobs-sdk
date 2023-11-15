@@ -42,8 +42,7 @@ namespace Microsoft.Azure.WebJobs.Host
                 throw new ArgumentNullException("type");
             }
 
-            ConcurrentBag<object> instances = null;
-            if (_registry.TryGetValue(type, out instances))
+            if (_registry.TryGetValue(type, out ConcurrentBag<object> instances))
             {
                 return instances;
             }

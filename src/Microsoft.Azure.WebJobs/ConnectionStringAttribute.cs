@@ -20,7 +20,7 @@ namespace Microsoft.Azure.WebJobs.Description
         }
 
         /// <summary>
-        /// The default connection string name to use, if none specified
+        /// The default connection string name to use, if none specified.
         /// </summary>
         public string Default { get; set; }
     }

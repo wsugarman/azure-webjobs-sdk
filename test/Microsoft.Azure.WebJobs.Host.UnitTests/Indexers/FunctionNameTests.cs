@@ -50,12 +50,13 @@ namespace Microsoft.Azure.WebJobs.Host.UnitTests.Indexers
         }
 
         [Fact]
-        public void TestInvalidName()
+        public Task TestInvalidName()
         {
             IHost host = new HostBuilder()
                 .ConfigureDefaultTestHost<ProgInvalidName>()
                 .Build();
-            TestHelpers.AssertIndexingError(() => host.GetJobHost<ProgInvalidName>().CallAsync("Test").GetAwaiter().GetResult(), "x y", "'x y' is not a valid function name.");
+
+            return TestHelpers.AssertIndexingErrorAsync(() => host.GetJobHost<ProgInvalidName>().CallAsync("Test"), "x y", "'x y' is not a valid function name.");
         }
 
         public class ProgInvalidName

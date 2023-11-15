@@ -100,7 +100,7 @@ namespace Microsoft.Azure.WebJobs.Host.UnitTests.Indexers
         }
 
         [Fact]
-        public void TestIndexError()
+        public Task TestIndexError()
         {
             var ext = new MyExtension();
 
@@ -111,7 +111,7 @@ namespace Microsoft.Azure.WebJobs.Host.UnitTests.Indexers
                 })
                 .Build();
 
-            TestHelpers.AssertIndexingError(() => host.GetJobHost<TestProgErrors>().CallAsync("Error").GetAwaiter().GetResult(), "TestProgErrors.Error",
+            return TestHelpers.AssertIndexingErrorAsync(() => host.GetJobHost<TestProgErrors>().CallAsync("Error"), "TestProgErrors.Error",
                 "Functions must return Task or void, have a binding attribute for the return value, or be triggered by a binding that natively supports return values.");
         }
 

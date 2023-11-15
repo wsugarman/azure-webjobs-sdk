@@ -10,11 +10,11 @@ namespace Microsoft.Azure.WebJobs
     /// </summary>
     public sealed class ParameterBindingData
     {
-        /// <summary>Initializes a new instance of the <see cref="ParameterBindingData"/> class</summary>
-        /// <param name="version">The version of the binding data content</param>
-        /// <param name="source">Identifies the extension the binding data is coming from</param>
-        /// <param name="content">BinaryData containing the binding data</param>
-        /// <param name="contentType">Content type of the binding data payload</param>
+        /// <summary>Initializes a new instance of the <see cref="ParameterBindingData"/> class.</summary>
+        /// <param name="version">The version of the binding data content.</param>
+        /// <param name="source">Identifies the extension the binding data is coming from.</param>
+        /// <param name="content">BinaryData containing the binding data.</param>
+        /// <param name="contentType">Content type of the binding data payload.</param>
         /// <exception cref="ArgumentNullException">Throws if version, source, content or contentType is null.</exception>
         public ParameterBindingData(string version, string source, BinaryData content, string contentType)
         {
@@ -25,12 +25,12 @@ namespace Microsoft.Azure.WebJobs
         }
 
         /// <summary>
-        /// The version of the binding data content
+        /// The version of the binding data content.
         /// </summary>
         public string Version { get; }
 
         /// <summary>
-        /// The extension source of the binding data i.e CosmosDB, AzureStorageBlobs
+        /// The extension source of the binding data i.e CosmosDB, AzureStorageBlobs.
         /// </summary>
         public string Source { get; }
 
@@ -40,7 +40,7 @@ namespace Microsoft.Azure.WebJobs
         public BinaryData Content { get; }
 
         /// <summary>
-        /// The content type of the binding data content i.e. "application/json"
+        /// The content type of the binding data content i.e. "application/json".
         /// </summary>
         public string ContentType { get; }
     }

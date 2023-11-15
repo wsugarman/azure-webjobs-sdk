@@ -7,7 +7,7 @@ namespace Microsoft.Azure.WebJobs.Description
 {
     /// <summary>
     /// Place this on binding attributes properties to tell the binders that that the property
-    /// should be automatically resolved as an app setting
+    /// should be automatically resolved as an app setting.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
     public sealed class AppSettingAttribute : Attribute
@@ -20,7 +20,7 @@ namespace Microsoft.Azure.WebJobs.Description
         }
 
         /// <summary>
-        /// The default app setting name to use, if none specified
+        /// The default app setting name to use, if none specified.
         /// </summary>
         public string Default { get; set; }
     }

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.Azure.WebJobs.Host.Executors;
 using Microsoft.Azure.WebJobs.Host.Indexers;
@@ -20,7 +21,7 @@ namespace Microsoft.Azure.WebJobs.Host.UnitTests.Indexers
     public class FunctionIndexerIntegrationErrorTests
     {
         [Fact]
-        public void TestFails()
+        public async Task TestFails()
         {
             foreach (var method in this.GetType().GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
             {
@@ -39,7 +40,7 @@ namespace Microsoft.Azure.WebJobs.Host.UnitTests.Indexers
                     configuration,
                     scopeFactoryMock.Object);
 
-                Assert.Throws<FunctionIndexingException>(() => indexer.IndexMethodAsync(method, stubIndex, CancellationToken.None).GetAwaiter().GetResult());
+                await Assert.ThrowsAsync<FunctionIndexingException>(() => indexer.IndexMethodAsync(method, stubIndex, CancellationToken.None));
             }
         }
 

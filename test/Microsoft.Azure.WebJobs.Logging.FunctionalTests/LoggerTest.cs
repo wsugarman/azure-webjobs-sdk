@@ -573,17 +573,17 @@ namespace Microsoft.Azure.WebJobs.Logging.FunctionalTests
                 await writer.AddAsync(item);
             }
 
-            // If we didn't truncate, then this would throw with a 413 "too large" exception. 
+            // If we didn't truncate, then this would throw with a 413 "too large" exception.
             await writer.FlushAsync();
 
-            // If we got here without an exception, then we successfully truncated the rows. 
+            // If we got here without an exception, then we successfully truncated the rows.
             // Lookup and verify 
             var instance = await reader.LookupFunctionInstanceAsync(functionIds[0]);
             Assert.True(instance.LogOutput.StartsWith(truncatedPrefix));
             Assert.True(instance.ErrorDetails.StartsWith(truncatedPrefix));
             Assert.True(instance.TriggerReason.StartsWith(truncatedPrefix));
 
-            Assert.Equal(0, instance.Arguments.Count); // totally truncated.           
+            Assert.Empty(instance.Arguments); // totally truncated.
         }
 
         [Fact]
@@ -862,7 +862,7 @@ namespace Microsoft.Azure.WebJobs.Logging.FunctionalTests
             await writer.AddAsync(item); // Start
 
             item.EndTime = item.StartTime.AddSeconds(1);
-            await writer.AddAsync(item); // end 
+            await writer.AddAsync(item); // end
         }
 
         CloudTable ILogTableProvider.GetTable(string suffix)
@@ -882,7 +882,7 @@ namespace Microsoft.Azure.WebJobs.Logging.FunctionalTests
         }
 
 
-        // List all tables that we may have handed out. 
+        // List all tables that we may have handed out.
         async Task<CloudTable[]> ILogTableProvider.ListTablesAsync()
         {
             var tableClient = GetTableClient();
@@ -898,7 +898,7 @@ namespace Microsoft.Azure.WebJobs.Logging.FunctionalTests
                 var acs = Environment.GetEnvironmentVariable("AzureWebJobsDashboard") ?? Environment.GetEnvironmentVariable("AzureWebJobsStorage");
                 if (acs == null)
                 {
-                    Assert.True(false, "Storage connection string environment variable not set. Should be set to an azure storage account connection string to use for testing.");
+                    Assert.Fail("Storage connection string environment variable not set. Should be set to an azure storage account connection string to use for testing.");
                 }
 
                 CloudStorageAccount account = CloudStorageAccount.Parse(acs);

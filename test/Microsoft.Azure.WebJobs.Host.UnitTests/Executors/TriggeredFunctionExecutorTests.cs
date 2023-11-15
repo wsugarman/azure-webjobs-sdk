@@ -34,13 +34,7 @@ namespace Microsoft.Azure.WebJobs.Host.UnitTests.Executors
         [Fact]
         public async Task TryExecuteAsync_WithInvokeHandler_InvokesHandler()
         {
-            var mockExecutor = new Mock<IFunctionExecutor>();
-            mockExecutor.Setup(m => m.TryExecuteAsync(It.IsAny<IFunctionInstance>(), It.IsAny<CancellationToken>())).
-                Returns<IFunctionInstance, CancellationToken>((x, y) =>
-                {
-                    x.Invoker.InvokeAsync(null, null).Wait();
-                    return Task.FromResult<IDelayedException>(null);
-                });
+            var mockExecutor = new MockFunctionExecutor();
 
             bool innerInvokerInvoked = false;
             Mock<IFunctionInvokerEx> mockInvoker = new Mock<IFunctionInvokerEx>();
@@ -61,7 +55,7 @@ namespace Microsoft.Azure.WebJobs.Host.UnitTests.Executors
             var functionDescriptor = new FunctionDescriptor();
             var serviceScopeFactoryMock = new Mock<IServiceScopeFactory>(MockBehavior.Strict);
             var instanceFactory = new TriggeredFunctionInstanceFactory<int>(mockTriggerBinding.Object, mockInvoker.Object, functionDescriptor, serviceScopeFactoryMock.Object);
-            var triggerExecutor = new TriggeredFunctionExecutor<int>(functionDescriptor, mockExecutor.Object, instanceFactory, NullLoggerFactory.Instance);
+            var triggerExecutor = new TriggeredFunctionExecutor<int>(functionDescriptor, mockExecutor, instanceFactory, NullLoggerFactory.Instance);
 
             // specify a custom handler on the trigger data and
             // verify it is invoked when the trigger executes
@@ -213,6 +207,15 @@ namespace Microsoft.Azure.WebJobs.Host.UnitTests.Executors
             functionExecutor.HostOutputMessage = new HostStartedMessage();
 
             return functionExecutor;
+        }
+
+        private sealed class MockFunctionExecutor : IFunctionExecutor
+        {
+            public async Task<IDelayedException> TryExecuteAsync(IFunctionInstance instance, CancellationToken cancellationToken)
+            {
+                await instance.Invoker.InvokeAsync(null, null);
+                return null;
+            }
         }
     }
 }

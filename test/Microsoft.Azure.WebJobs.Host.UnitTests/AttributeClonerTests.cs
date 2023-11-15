@@ -199,18 +199,11 @@ namespace Microsoft.Azure.WebJobs.Host.UnitTests
         {
             Attr1 a1 = new Attr1 { Path = "{name}" };
 
-            try
-            {
-                var cloner = new AttributeCloner<Attr1>(a1, emptyContract, _emptyConfig);
-                Assert.True(false, "Should have caught binding contract mismatch");
-            }
-            catch (InvalidOperationException e)
-            {
-                string expectedError = "Unable to resolve binding parameter 'name'. Binding expressions must map to either a value provided by the trigger or a property of the value the trigger is bound to, or must be a system binding expression (e.g. sys.randguid, sys.utcnow, etc.).";
-                Assert.Equal(expectedError, e.Message);
-            }
-        }
+            InvalidOperationException e = Assert.Throws<InvalidOperationException>(() => new AttributeCloner<Attr1>(a1, emptyContract, _emptyConfig));
 
+            string expectedError = "Unable to resolve binding parameter 'name'. Binding expressions must map to either a value provided by the trigger or a property of the value the trigger is bound to, or must be a system binding expression (e.g. sys.randguid, sys.utcnow, etc.).";
+            Assert.Equal(expectedError, e.Message);
+        }
 
         // Test on an attribute that does NOT implement IAttributeInvokeDescriptor
         // Key parameter is a property (not ctor)
@@ -739,19 +732,11 @@ namespace Microsoft.Azure.WebJobs.Host.UnitTests
             };
             var ctx = GetCtx(values);
 
-            try
-            {
-                new AttributeCloner<ValidationWithAutoResolveAttribute>(attr, GetBindingContract("name"), _emptyConfig);
-                Assert.False(true, "Validation should have failed");
-            }
-            catch (InvalidOperationException e)
-            {
-                // Since this is [AutoResolve], include the illegal value in the message.
-                Assert.True(e.Message.Contains(IllegalValue));
-            }
+            InvalidOperationException e = Assert.Throws<InvalidOperationException>(() => new AttributeCloner<ValidationWithAutoResolveAttribute>(attr, GetBindingContract("name"), _emptyConfig));
+            Assert.True(e.Message.Contains(IllegalValue));
         }
 
-        // With Validation + AppSetting         
+        // With Validation + AppSetting
         [Fact]
         public void Validation_With_AppSetting_Early_Fail()
         {
@@ -766,16 +751,8 @@ namespace Microsoft.Azure.WebJobs.Host.UnitTests
             };
             var ctx = GetCtx(values);
 
-            try
-            {
-                new AttributeCloner<ValidationWithAppSettingAttribute>(attr, GetBindingContract("name"), _emptyConfig);
-                Assert.False(true, "Validation should have failed");
-            }
-            catch (InvalidOperationException e)
-            {
-                // Since this is [AppSetting], don't include the illegal value in the message. It could be secret. 
-                Assert.False(e.Message.Contains(IllegalValue));
-            }
+            InvalidOperationException e = Assert.Throws<InvalidOperationException>(() => new AttributeCloner<ValidationWithAppSettingAttribute>(attr, GetBindingContract("name"), _emptyConfig));
+            Assert.False(e.Message.Contains(IllegalValue));
         }
 
         // No AppSetting/AutoResolve, so validate early 
@@ -794,25 +771,17 @@ namespace Microsoft.Azure.WebJobs.Host.UnitTests
             };
             var ctx = GetCtx(values);
 
-            try
+            if (shouldSucceed)
             {
                 var cloner = new AttributeCloner<ValidationOnlyAttribute>(attr, GetBindingContract("name"), _emptyConfig);
+                var attrResolved = cloner.ResolveFromBindings(values);
 
-                if (shouldSucceed)
-                {
-                    // Success
-                    var attrResolved = cloner.ResolveFromBindings(values);
-
-                    // no autoresolve/appsetting, so the final value should be the same as the input value. 
-                    Assert.Equal(value, attrResolved.Value);
-
-                    return;
-                }
-                Assert.False(true, "Validation should have failed");
+                // no autoresolve/appsetting, so the final value should be the same as the input value. 
+                Assert.Equal(value, attrResolved.Value);
             }
-            catch (InvalidOperationException e)
+            else
             {
-                Assert.False(shouldSucceed);
+                InvalidOperationException e = Assert.Throws<InvalidOperationException>(() => new AttributeCloner<ValidationOnlyAttribute>(attr, GetBindingContract("name"), _emptyConfig));
 
                 // Non-appsetting, so include the value in the message
                 Assert.True(e.Message.Contains(value));

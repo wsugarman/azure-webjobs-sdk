@@ -45,7 +45,7 @@ namespace Microsoft.Azure.WebJobs.Host.UnitTests.Common
 
         // Fitler that throws a validation error. 
         [Fact]
-        public void TestValidationError()
+        public Task TestValidationError()
         {
             var nr = new FakeNameResolver().Add("x", "error");
 
@@ -56,7 +56,7 @@ namespace Microsoft.Azure.WebJobs.Host.UnitTests.Common
                 }, nameResolver: nr)
                 .Build();
 
-            TestHelpers.AssertIndexingError(() => host.GetJobHost<Program>().CallAsync("Func").GetAwaiter().GetResult(), "Program.Func", FakeExtClient.IndexErrorMsg);
+            return TestHelpers.AssertIndexingErrorAsync(() => host.GetJobHost<Program>().CallAsync("Func"), "Program.Func", FakeExtClient.IndexErrorMsg);
         }
 
         // Filter takes the not-null branch
